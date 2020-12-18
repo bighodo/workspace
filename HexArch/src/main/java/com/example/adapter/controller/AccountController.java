@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.application.usecase.CheckBalanceUseCase;
 import com.example.application.usecase.DepositUseCase;
+import com.example.application.usecase.MakeAccountUseCase;
 import com.example.application.usecase.WithdrawUseCase;
 
 @RestController
@@ -15,20 +17,34 @@ import com.example.application.usecase.WithdrawUseCase;
 public class AccountController {
 	private DepositUseCase depositUseCase;
 	private WithdrawUseCase withdrawUseCase;
+	private MakeAccountUseCase makeAccountUseCase;
+	private CheckBalanceUseCase checkBalanceUseCase;
 	
-    public AccountController(DepositUseCase depositUseCase, WithdrawUseCase withdrawUseCase) {
+    public AccountController(DepositUseCase depositUseCase, WithdrawUseCase withdrawUseCase, MakeAccountUseCase makeAccountUseCase, CheckBalanceUseCase checkBalanceUseCase) {
         this.depositUseCase = depositUseCase;
         this.withdrawUseCase = withdrawUseCase;
+        this.makeAccountUseCase = makeAccountUseCase;
+        this.checkBalanceUseCase = checkBalanceUseCase;
     }
 	
 	@PostMapping(value = "/{id}/deposit/{amount}")
-	void deposit(@PathVariable final Long id, @PathVariable final BigDecimal amount) {
-		depositUseCase.deposit(id, amount);
+	String deposit(@PathVariable final Long id, @PathVariable final BigDecimal amount) {
+		return depositUseCase.deposit(id, amount);
 	}
 	
 	@PostMapping(value = "/{id}/withdraw/{amount}")
-	void withdraw(@PathVariable final Long id, @PathVariable final BigDecimal amount) {
-		withdrawUseCase.withdraw(id, amount);
+	String withdraw(@PathVariable final Long id, @PathVariable final BigDecimal amount) {
+		return withdrawUseCase.withdraw(id, amount);
+	}
+	
+	@PostMapping(value ="/{id}/check")
+	String checkBalance(@PathVariable final Long id) {
+		return checkBalanceUseCase.checkBalance(id);
+	}
+	
+	@PostMapping(value = "/makeAccount")
+	String createAccount() {
+		return makeAccountUseCase.makeAccount();
 	}
 	
 	@PostMapping(value = "/{id}")

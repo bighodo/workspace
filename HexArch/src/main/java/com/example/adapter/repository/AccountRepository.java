@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 import com.example.application.domain.Account;
 import com.example.application.usecase.LoadAccountPort;
 import com.example.application.usecase.SaveAccountPort;
-import com.example.application.usecase.TestPort;
+import com.example.application.usecase.CreateAccountPort;
 
 @Component
-public class AccountRepository implements LoadAccountPort, SaveAccountPort, TestPort{
+public class AccountRepository implements LoadAccountPort, SaveAccountPort, CreateAccountPort{
 	
 	@Autowired
 	private CRUDAccountRepository repository;
@@ -28,7 +28,10 @@ public class AccountRepository implements LoadAccountPort, SaveAccountPort, Test
 	}
 	
 	@Override
-	public List<Account> getList() {
-		return (List<Account>) repository.findAll(); 
+	public Account createAccount() {
+		System.out.println("여기까지했음");
+		Account account = new Account();
+		repository.save(account);
+		return account;
 	}
 }

@@ -6,43 +6,58 @@ import java.util.Optional;
 
 import com.example.adapter.repository.AccountRepository;
 import com.example.application.domain.Account;
+import com.example.application.usecase.CheckBalanceUseCase;
+import com.example.application.usecase.CreateAccountPort;
 import com.example.application.usecase.DepositUseCase;
 import com.example.application.usecase.LoadAccountPort;
+import com.example.application.usecase.MakeAccountUseCase;
 import com.example.application.usecase.SaveAccountPort;
-import com.example.application.usecase.TestPort;
 import com.example.application.usecase.WithdrawUseCase;
 
-public class AccountService implements DepositUseCase, WithdrawUseCase{
+public class AccountService implements DepositUseCase, WithdrawUseCase, MakeAccountUseCase, CheckBalanceUseCase{
 
-	private LoadAccountPort loadAccountUseCase;
-	private SaveAccountPort saveAccountUseCase;
-	private TestPort testUseCase;
+	private LoadAccountPort loadAccountPort;
+	private SaveAccountPort saveAccountPort;
+	private CreateAccountPort createAccountPort;
 	
-	public AccountService(LoadAccountPort loadAccountUseCase, SaveAccountPort saveAccountUseCase, TestPort testUseCase) {
-		this.loadAccountUseCase = loadAccountUseCase;
-		this.saveAccountUseCase = saveAccountUseCase;
-		this.testUseCase = testUseCase;
-		System.out.println("테스트시작");
-		System.out.println(testUseCase.getList());
+	public AccountService(LoadAccountPort loadAccountPort, SaveAccountPort saveAccountPort, CreateAccountPort createAccountPort) {
+		this.loadAccountPort = loadAccountPort;
+		this.saveAccountPort = saveAccountPort;
+		this.createAccountPort = createAccountPort;
 	}
 
 	@Override
-	public boolean withdraw(Long id, BigDecimal amount) {
-		Account account = loadAccountUseCase.load(id)
+	public String withdraw(Long id, BigDecimal amount) {
+		Account account = loadAccountPort.load(id)
 				.orElseThrow(NoSuchElementException::new);
 		if (account.withdraw(amount)) {
-			saveAccountUseCase.save(account);
-			return true;
+			saveAccountPort.save(account);
+			return account.toString();
 		}
-		return false;
+		return "Amount exceed balance";
 	}
 
 	@Override
-	public void deposit(Long id, BigDecimal amount) {
-		Account account = loadAccountUseCase.load(id)
+	public String deposit(Long id, BigDecimal amount) {
+		Account account = loadAccountPort.load(id)
 				.orElseThrow(NoSuchElementException::new);
 		account.deposit(amount);
-		saveAccountUseCase.save(account);
+		saveAccountPort.save(account);
+		
+		return account.toString();
+	}
+
+	@Override
+	public String makeAccount() {
+		Account account = createAccountPort.createAccount();
+		return account.toString();
+	}
+
+	@Override
+	public String checkBalance(Long id) {
+		Account account = loadAccountPort.load(id)
+				.orElseThrow(NoSuchElementException::new);
+		return account.toString();
 	}
 	
 }
