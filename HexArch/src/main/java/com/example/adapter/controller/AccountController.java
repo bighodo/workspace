@@ -2,11 +2,13 @@ package com.example.adapter.controller;
 
 import java.math.BigDecimal;
 
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.adapter.exception.cannotFindAccountException;
 import com.example.application.usecase.CheckBalanceUseCase;
 import com.example.application.usecase.DepositUseCase;
 import com.example.application.usecase.MakeAccountUseCase;
@@ -14,7 +16,7 @@ import com.example.application.usecase.WithdrawUseCase;
 
 @RestController
 @RequestMapping("/account")
-public class AccountController {
+public class AccountController{
 	private DepositUseCase depositUseCase;
 	private WithdrawUseCase withdrawUseCase;
 	private MakeAccountUseCase makeAccountUseCase;
@@ -47,13 +49,9 @@ public class AccountController {
 		return makeAccountUseCase.makeAccount();
 	}
 	
-	@PostMapping(value = "/{id}")
-	Long test(@PathVariable final Long id) {
-		return id;
+	@ExceptionHandler(cannotFindAccountException.class)
+	public String sampleHandler() {
+		return "그딴거 안보임";
 	}
 	
-	@PostMapping("/2")
-	String test2() {
-		return "beta";
-	}
 }

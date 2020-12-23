@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 
+import com.example.adapter.exception.cannotFindAccountException;
 import com.example.application.domain.Account;
 import com.example.application.usecase.LoadAccountPort;
 import com.example.application.usecase.SaveAccountPort;
@@ -48,8 +50,12 @@ public class AccountRepository implements LoadAccountPort, SaveAccountPort, Crea
 	@Override
 	public Account load(Long id) {
 		Account account = null;
+		try {
+			account = jdbcTemplate.queryForObject(String.format("SELECT ID,BALANCE FROM ACCOUNT WHERE ID = '%s';", id), rowMapper);
+		} catch (DataAccessException e) {
+			throw new cannotFindAccountException();
+		}
 		
-		account = jdbcTemplate.queryForObject(String.format("SELECT ID,BALANCE FROM ACCOUNT WHERE ID = '%s';", id), rowMapper);
 		return account;
 	}
 	
