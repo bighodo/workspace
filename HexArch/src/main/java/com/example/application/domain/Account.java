@@ -2,20 +2,10 @@ package com.example.application.domain;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
-@Entity
 public class Account {
-	@Id @GeneratedValue
 	private long id;
 	private BigDecimal balance;
+	private String log;
 	
 	public Account() {
 		this.balance = BigDecimal.ZERO;
@@ -36,4 +26,30 @@ public class Account {
 	public String toString() {
 		return "Account : " + this.getId() + "  Balance : " + this.getBalance();
 	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public BigDecimal getBalance() {
+		return balance;
+	}
+
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
+	}
+
+	public String getLog() {
+		return log;
+	}
+
+	public void setLog(String log) {
+		this.log = log;
+	}
+	
+	
 }

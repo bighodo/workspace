@@ -28,8 +28,7 @@ public class AccountService implements DepositUseCase, WithdrawUseCase, MakeAcco
 
 	@Override
 	public String withdraw(Long id, BigDecimal amount) {
-		Account account = loadAccountPort.load(id)
-				.orElseThrow(NoSuchElementException::new);
+		Account account = loadAccountPort.load(id);
 		if (account.withdraw(amount)) {
 			saveAccountPort.save(account);
 			return account.toString();
@@ -39,8 +38,7 @@ public class AccountService implements DepositUseCase, WithdrawUseCase, MakeAcco
 
 	@Override
 	public String deposit(Long id, BigDecimal amount) {
-		Account account = loadAccountPort.load(id)
-				.orElseThrow(NoSuchElementException::new);
+		Account account = loadAccountPort.load(id);
 		account.deposit(amount);
 		saveAccountPort.save(account);
 		
@@ -55,8 +53,7 @@ public class AccountService implements DepositUseCase, WithdrawUseCase, MakeAcco
 
 	@Override
 	public String checkBalance(Long id) {
-		Account account = loadAccountPort.load(id)
-				.orElseThrow(NoSuchElementException::new);
+		Account account = loadAccountPort.load(id);
 		return account.toString();
 	}
 	
