@@ -24,6 +24,10 @@ const Schedule = () => {
     const [appointments, setAppointments] = useState([])
     const [appIndexTable, setAppIndexTable] = useState({});
 
+    const [user, setUser] = useState({username:""});
+    const [users, setUsers] = useState([]);
+    const [selectedUsers, setSelectedUsers] = useState([]);
+
     const resizeEvent = useCallback(()=>{
         setHeight(window.innerHeight);
     },[])
