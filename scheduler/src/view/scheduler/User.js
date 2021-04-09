@@ -6,11 +6,12 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { AccountBox, Add } from '@material-ui/icons';
+import { AccountBox, Add, Remove } from '@material-ui/icons';
 import axios from 'axios';
 import { Tab } from '@material-ui/core';
 
 const User = (props) => {
+    const [updated, setUpdated] = useState(0);
     const [users, setUsers] = useState([]);
     const [user, setUser] = useState({username:""});
     const [selectedUsers, setSelectedUsers] = useState([]);
@@ -20,6 +21,10 @@ const User = (props) => {
         updateUser();
         updateUsers();
     },[]);
+
+    useEffect(()=>{
+        setUpdated(props.updated);
+    },[props.updated])
 
     const updateUser = () => {
         const url = "/api/user/account/one";
@@ -37,16 +42,23 @@ const User = (props) => {
         })
     }
 
-    const removeFromUsers = user => {
-        for (let i = 0; i < users.length; i++) {
-            if (users[i] === user) {
-                users.splice(i,0);
+    const deselectUser = user => {
+        for (let i = 0; i < selectedUsers.length; i++) {
+            if (selectedUsers[i] === user) {
+                selectedUsers.splice(i,0);
+                users.push(user);
+                update();
             }
         }
     }
 
-    const addUser = user => {
+    const selectUser = user => {
+        users.push(user);
+        update();
+    }
 
+    const update = () => {
+        props.update();
     }
 
     const userTableCells = users.map((user,index)=>
@@ -54,7 +66,17 @@ const User = (props) => {
             <TableCell key={user.id}>
                 <Add className="user-add-button" 
                     size="small"
-                    onClick={e=>{addUser(user)}}/> {user.username}
+                    onClick={e=>{selectUser(user)}}/> {user.username}
+            </TableCell>
+        </TableRow>
+    )
+
+    const selectedUserTableCelss = selectedUsers.map((user,index)=>
+        <TableRow>
+            <TableCell key={user.id}>
+                <Remove className="user-add-button" 
+                    size="small"
+                    onClick={e=>{deselectUser(user)}}/> {user.username}
             </TableCell>
         </TableRow>
     )

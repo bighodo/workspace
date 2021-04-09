@@ -160,7 +160,9 @@ const Schedule = () => {
 
     return (
         <Paper>
-            <User/>
+            <User
+                updated={updated}
+                update={update}/>
             <Paper className="scheduler-container">
                 <Scheduler data={appointments} height={height}>
                     <ViewState defaultCurrentDate={today()}/>
