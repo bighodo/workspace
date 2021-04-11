@@ -15,18 +15,13 @@ import { ViewState, EditingState, IntegratedEditing } from '@devexpress/dx-react
 import axios from 'axios';
 import { red } from '@material-ui/core/colors';
 
-import User from './User';
-
 //import appointments from '../../../demo-data/today-appointments';
 const Schedule = () => {
     const [height, setHeight] = useState(window.innerHeight);
     const [updated, setUpdated] = useState(0);
+
     const [appointments, setAppointments] = useState([])
     const [appIndexTable, setAppIndexTable] = useState({});
-
-    const [user, setUser] = useState({username:""});
-    const [users, setUsers] = useState([]);
-    const [selectedUsers, setSelectedUsers] = useState([]);
 
     const resizeEvent = useCallback(()=>{
         setHeight(window.innerHeight);
@@ -40,6 +35,16 @@ const Schedule = () => {
             window.removeEventListener("resize",resizeEvent);
         };
     },[]);
+
+    useEffect(()=>{
+        let appoints = [];
+        appoints.push(props.user.appointments);
+        for (let i = 0; i < props.selectedUsers.length; i++) {
+            let appoint = props.selectedUsers[i];
+            appoints.push(appoint);
+        }
+        setAppointments(appoints);
+    },[props.user, props.selectedUsers])
 
     useEffect(()=>{
         let indexTable = {};
@@ -163,25 +168,20 @@ const Schedule = () => {
     }, [appointments,update]);
 
     return (
-        <Paper>
-            <User
-                updated={updated}
-                update={update}/>
-            <Paper className="scheduler-container">
-                <Scheduler data={appointments} height={height}>
-                    <ViewState defaultCurrentDate={today()}/>
-                    <WeekView startDayHour={11} endDayHour={24} excludedDays={[1]}/>
-                    {/* <Toolbar />
-                    <TodayButton />
-                    <DateNavigator /> */}
-                    <EditingState 
-                        onCommitChanges={onCommitChanges}/>
-                    <IntegratedEditing />
-                    <Appointments />
-                    <DragDropProvider allowDrag={()=>{return true}}/>
-                    <AppointmentForm />
-                </Scheduler>
-            </Paper>
+        <Paper className="scheduler-container">
+            <Scheduler data={appointments} height={height}>
+                <ViewState defaultCurrentDate={today()} />
+                <WeekView startDayHour={11} endDayHour={24} excludedDays={[1]} />
+                {/* <Toolbar />
+                <TodayButton />
+                <DateNavigator /> */}
+                <EditingState
+                    onCommitChanges={onCommitChanges} />
+                <IntegratedEditing />
+                <Appointments />
+                <DragDropProvider allowDrag={() => { return true }} />
+                <AppointmentForm />
+            </Scheduler>
         </Paper>
     );
 }

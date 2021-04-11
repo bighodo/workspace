@@ -12,10 +12,10 @@ import { Tab } from '@material-ui/core';
 
 const User = (props) => {
     const [updated, setUpdated] = useState(0);
-    const [users, setUsers] = useState([]);
-    const [user, setUser] = useState({username:""});
-    const [selectedUsers, setSelectedUsers] = useState([]);
-    const [updated, setUpdated] = useState(0);
+
+    const [user, setUser] = useState(props.user);
+    const [users, setUsers] = useState(props.users);
+    const [selectedUsers, setSelectedUsers] = useState(props.selectedUsers);
 
     useEffect(()=>{
         updateUser();
@@ -26,11 +26,27 @@ const User = (props) => {
         setUpdated(props.updated);
     },[props.updated])
 
+    useEffect(()=>{
+        setUser(props.user);
+    },[props.user])
+
+    useEffect(()=>{
+        setUsers(props.users);
+    },[props.users])
+
+    useEffect(()=>{
+        setSelectedUsers(props.selectedUsers);
+    },[props.selectedUsers])
+
+    uesrEffect(()=>{
+        setUpdated(props.updated);
+    },[props.updated])
+
     const updateUser = () => {
         const url = "/api/user/account/one";
         axios.get(url).then(res=>{
             if (res.data.result === 1) {
-                setUser(res.data.user);
+                props.setUser(res.data.user);
             }
         })
     }
@@ -38,7 +54,7 @@ const User = (props) => {
     const updateUsers = () => {
         const url = "/api/user/account/all";
         axios.get(url).then(res=>{
-            setUsers(res.data.users);
+            props.setUsers(res.data.users);
         })
     }
 
@@ -47,19 +63,16 @@ const User = (props) => {
             if (selectedUsers[i] === user) {
                 selectedUsers.splice(i,0);
                 users.push(user);
-                update();
+                props.update();
             }
         }
     }
 
     const selectUser = user => {
         users.push(user);
-        update();
-    }
-
-    const update = () => {
         props.update();
     }
+
 
     const userTableCells = users.map((user,index)=>
         <TableRow>
