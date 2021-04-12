@@ -167,11 +167,20 @@ const Schedule = () => {
         }
     }, [appointments,update]);
 
+    const timeTableCell = ({ onDoubleClick, ...restProps }) => {
+        return <WeekView.TimeTableCell onDoubleClick={()=>{createAppointment(restProps)}}/>;
+    };
+
+
     return (
         <Paper className="scheduler-container">
             <Scheduler data={appointments} height={height}>
                 <ViewState defaultCurrentDate={today()} />
-                <WeekView startDayHour={11} endDayHour={24} excludedDays={[1]} />
+                <WeekView 
+                    startDayHour={11} 
+                    endDayHour={24} 
+                    excludedDays={[1]}
+                    timeTableCellComponent={timeTableCell}/>
                 {/* <Toolbar />
                 <TodayButton />
                 <DateNavigator /> */}
