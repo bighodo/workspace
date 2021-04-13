@@ -1,5 +1,10 @@
 package com.example.dataprovider;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,5 +43,22 @@ public class CommonDataProvider {
 				appointDto.getTitle(), appointDto.getNotes());
 		appoint.setUser(userDataProvider.getUserById(appointDto.getUser()));
 		return appoint;
+	}
+
+	public Map<String,Object> convertUserDto2Map(UserDto userDto) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("id", userDto.getId());
+		result.put("userId", userDto.getUserId());
+		result.put("username", userDto.getUsername());
+		result.put("appointments", userDto.getAppointments());
+		return result;
+	}
+
+	public List<Map<String,Object>> convertUserDtos2MapList(List<UserDto> userDtos) {
+		List<Map<String,Object>> result = new ArrayList<Map<String,Object>>();
+		for (int i = 0; i < userDtos.size(); i++) {
+			result.add(convertUserDto2Map(userDtos.get(i)));
+		}
+		return result;
 	}
 }

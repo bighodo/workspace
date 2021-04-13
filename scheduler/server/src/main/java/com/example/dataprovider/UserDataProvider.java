@@ -16,11 +16,23 @@ import com.example.repository.UserRepository;
 public class UserDataProvider {
 	@Autowired
 	private UserRepository repo;
+	@Autowired
+	private AppointmentDataProvider appointmentDataProvider;
 	
 	public User getUserById(String id) {
 		Optional<UserDto> userDto = repo.findById(id);
 		if(userDto.isPresent()) {
 			return userDto.get().getUser();
+		}
+		return null;
+	}
+
+	public UserDto getUserByIdWithAppointments(String id) {
+		Optional<UserDto> userDto = repo.findById(id);
+		if(userDto.isPresent()) {
+			UserDto user = userDto.get();
+			user.addAppointemnts(appointmentDataProvider.getAllAppointmentByUserId(id));
+			return user;
 		}
 		return null;
 	}
@@ -48,6 +60,15 @@ public class UserDataProvider {
 			users.add(userDtos.get(i).getUser());
 		}
 		return users;
+	}
+
+	public List<UserDto> getAllWithAppointments() {
+		List<UserDto> userDtos= repo.findAll();
+		for (int i = 0; i < userDtos.size(); i++) {
+			UserDto userDto = userDtos.get(i);
+			userDto.addAppointemnts(appointmentDataProvider.getAllAppointmentByUserId(userDto.getId()));
+		}
+		return userDtos;
 	}
 	
 	public int createUser(User user) {

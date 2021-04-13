@@ -32,9 +32,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RequestMapping(value = "api/user/account", produces = "application/json; charset=utf8")
 public class UserController {
 	@Autowired
-	UserDataProvider userDataProvider;
+	private UserDataProvider userDataProvider;
 	@Autowired
 	private JwtDataProvider jwtDataProivder;
+	@Autowired
+	private CommonDataProvider commonDataProvider;
 	
 	ObjectMapper mapper = new ObjectMapper();
 	
@@ -43,7 +45,8 @@ public class UserController {
 		JsonNode jsonNodeMap = null;
 		Map<String, Object> resData = new HashMap<String, Object>(); 
 		
-		resData.put("users", userDataProvider.getAll());
+		List<UserDto> userDtos = userDataProvider.getAllWithAppointments();
+		resData.put("users", commonDataProvider.convertUserDtos2MapList(userDtos));
 		jsonNodeMap = mapper.convertValue(resData, JsonNode.class);
 		return jsonNodeMap;
 	}
@@ -60,11 +63,11 @@ public class UserController {
 			resData.put("result",0);
 		} else {
 			String id = jwtDataProivder.getIdFromToken(token);
-			User user = userDataProvider.getUserById(id);
-			if (user == null) {
+			UserDto userDto = userDataProvider.getUserByIdWithAppointments(id);
+			if (userDto == null) {
 				resData.put("result",0);
 			} else {
-				resData.put("user", user);
+				resData.put("user", commonDataProvider.convertUserDto2Map(userDto));
 				resData.put("result",1);
 			}
 		}

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,9 +27,13 @@ public class UserDto {
 	private String password;
 	private String role; //USER, ADMIN
 	
+	@Transient
+	private List<Appointment> appointments;
+	
 
 	public UserDto() {
 		this.role = "ROLE_USER";
+		this.appointments = new ArrayList<Appointment>();
 	}
 	
 	public UserDto(String username, String userId, String role) {
@@ -36,6 +41,7 @@ public class UserDto {
 		this.username = username;
 		this.userId = userId;
 		this.role = role;
+		this.appointments = new ArrayList<Appointment>();
 	}
 
 	public void parse(User user) {
@@ -84,8 +90,20 @@ public class UserDto {
 		return userId;
 	}
 
+	public String getId() {
+		return id;
+	}
+
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public List<Appointment> getAppointments() {
+		return appointments;
+	}
+
+	public void addAppointemnts(List<Appointment> appoints) {
+		appointments.addAll(appoints);
 	}
 	
 	public Collection<? extends GrantedAuthority> readAuthorities() {

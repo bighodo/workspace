@@ -10,8 +10,17 @@ import {
     WeekView,
     DragDropProvider,
     AppointmentForm,
+
+    Resources,
+    GroupingPanel,
 } from '@devexpress/dx-react-scheduler-material-ui';
-import { ViewState, EditingState, IntegratedEditing } from '@devexpress/dx-react-scheduler';
+import { 
+    ViewState, 
+    GroupingState, 
+    IntegratedGrouping, 
+    IntegratedEditing, 
+    EditingState, 
+} from '@devexpress/dx-react-scheduler';
 import axios from 'axios';
 import { red } from '@material-ui/core/colors';
 
@@ -20,8 +29,22 @@ const Schedule = () => {
     const [height, setHeight] = useState(window.innerHeight);
     const [updated, setUpdated] = useState(0);
 
-    const [appointments, setAppointments] = useState([])
+    const [appointments, setAppointments] = useState([]);
+    const [totalAppointments, setTotalAppointments] = useState([]);
     const [appIndexTable, setAppIndexTable] = useState({});
+
+    const [viewStyle, setViewStyle] = useState([
+        { text: "Individual", id: 0,},
+        { text: "Total", id: 1}
+    ]);
+    const [resources, setResources] = useState([{
+        fieldName: 'viewStyle',
+        title: 'ViewStyle',
+        instances: viewStyle
+    }]);
+    const [grouping, setGrouping] = useState([{
+        resourceName: 'viewStyle'
+    }]);
 
     const resizeEvent = useCallback(()=>{
         setHeight(window.innerHeight);
@@ -59,7 +82,6 @@ const Schedule = () => {
         let text = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
         return text;
     }
-
 
     const update = () => {
         setUpdated(updated+1);
@@ -175,7 +197,11 @@ const Schedule = () => {
     return (
         <Paper className="scheduler-container">
             <Scheduler data={appointments} height={height}>
-                <ViewState defaultCurrentDate={today()} />
+                <ViewState />
+                <EditingState
+                    onCommitChanges={onCommitChanges} />
+                <GroupingState
+                    grouping={grouping}/>
                 <WeekView 
                     startDayHour={11} 
                     endDayHour={24} 
@@ -184,9 +210,13 @@ const Schedule = () => {
                 {/* <Toolbar />
                 <TodayButton />
                 <DateNavigator /> */}
-                <EditingState
-                    onCommitChanges={onCommitChanges} />
-                <IntegratedEditing />
+
+                <Resources
+                    data={resources}
+                    mainResourceName="viewStyle"/>
+                <IntegratedGrouping />
+                <GroupingPanel />
+
                 <Appointments />
                 <DragDropProvider allowDrag={() => { return true }} />
                 <AppointmentForm />
