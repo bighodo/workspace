@@ -96,7 +96,7 @@ const User = (props) => {
     )
 
     return (
-        <Paper className="user-table-container">
+        <div className="user-table-container">
             <TableContainer>
                 <Table>
                     <TableHead>
@@ -124,7 +124,7 @@ const User = (props) => {
                     </TableBody>
                 </Table>
             </TableContainer>
-        </Paper>
+        </div>
     )
 }
 

@@ -1,3 +1,4 @@
+import React from 'react';
 import original from 'axios';
 
 let newAxios = () => {
@@ -56,7 +57,7 @@ const errorHandler = err => {
 }
 
 const error403 = () => {
-    window.location.href = window.location.origin + "/login";
+    window.location.replace("/login");
 }
 
 const error404 = () => {

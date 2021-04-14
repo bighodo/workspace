@@ -13,29 +13,15 @@ import javax.persistence.Transient;
 @Entity
 @Table(name="APPOINTMENT")
 public class AppointmentDto {
-	static String date2String(Date date) {
-		return date.getYear()+"-"
-			+String.format("%02d",date.getMonth())
-			+"-"
-			+String.format("%02d",date.getDate())
-			+"T"
-			+String.format("%02d",date.getHours())
-			+":"
-			+String.format("%02d",date.getMinutes());
-	}
-
+	
 	@Id
 	private String id;
-	private Date start;
-	private Date end;
+	private Date startDate;
+	private Date endDate;
 	private String title;
 	private String notes;
 	private String user;
 	
-	@Transient
-	private String startDate;
-	@Transient
-	private String endDate;
 	
 
 	
@@ -59,13 +45,11 @@ public class AppointmentDto {
 	
 	public void parse(Appointment appoint) {
 		id = appoint.getId();
-		start = appoint.getStart();
-		end = appoint.getEnd();
+		startDate = appoint.getStartDate();
+		endDate = appoint.getEndDate();
 		title = appoint.getTitle();
 		notes = appoint.getNotes();
 		user = appoint.getUser().getId();
-		startDate = AppointmentDto.date2String(start);
-		endDate = AppointmentDto.date2String(end);
 	}
 	
 
@@ -75,20 +59,8 @@ public class AppointmentDto {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public Date getStart() {
-		return start;
-	}
-	public void setStart(Date start) {
-		this.start = start;
-		startDate = AppointmentDto.date2String(this.start);
-	}
-	public Date getEnd() {
-		return end;
-	}
-	public void setEnd(Date end) {
-		this.end = end;
-		endDate = AppointmentDto.date2String(this.end);
-	}
+
+
 	public String getTitle() {
 		return title;
 	}
@@ -112,12 +84,20 @@ public class AppointmentDto {
 		this.user = user;
 	}
 
-	public String getStartDate() {
+	public Date getStartDate() {
 		return startDate;
 	}
+	
+	public void setStart(Date start) {
+		this.startDate = start;
+	}
 
-	public String getEndDate() {
+	public Date getEndDate() {
 		return endDate;
+	}
+
+	public void setEnd(Date end) {
+		this.endDate = end;
 	}
 	
 	

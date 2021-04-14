@@ -39,7 +39,7 @@ public class CommonDataProvider {
 	}
 
 	public Appointment convert2Entity(AppointmentDto appointDto) {
-		Appointment appoint = new Appointment(appointDto.getId(), appointDto.getStart(), appointDto.getEnd(),
+		Appointment appoint = new Appointment(appointDto.getId(), appointDto.getStartDate(), appointDto.getEndDate(),
 				appointDto.getTitle(), appointDto.getNotes());
 		appoint.setUser(userDataProvider.getUserById(appointDto.getUser()));
 		return appoint;

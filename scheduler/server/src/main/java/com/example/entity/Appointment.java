@@ -8,25 +8,13 @@ import java.util.UUID;
 
 
 public class Appointment {
-	static String date2String(Date date) {
-		return date.getYear()+"-"
-			+String.format("%02d",date.getMonth())
-			+"-"
-			+String.format("%02d",date.getDate())
-			+"T"
-			+String.format("%02d",date.getHours())
-			+":"
-			+String.format("%02d",date.getMinutes());
-	}
 	
 	private String id;
-	private Date start;
-	private Date end;
+	private Date startDate;
+	private Date endDate;
 	private String title;
 	private String notes;
 	private User user;
-	private String startDate;
-	private String endDate;
 	
 	public Appointment() {
 		super();
@@ -34,11 +22,11 @@ public class Appointment {
 		this.title = "";
 		this.notes = "";
 		
-		this.setStart(new Date());
+		this.startDate = new Date();
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
 		cal.add(Calendar.MINUTE, 30);
-		this.setEnd(cal.getTime());
+		this.endDate = cal.getTime();
 	}
 	
 	public Appointment(String title) {
@@ -47,11 +35,11 @@ public class Appointment {
 		this.title = title;
 		this.notes = "";
 		
-		this.setStart(new Date());
+		this.startDate = new Date();
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
 		cal.add(Calendar.MINUTE, 30);
-		this.setEnd(cal.getTime());
+		this.endDate = cal.getTime();
 	}
 	
 	public Appointment(String title, String notes) {
@@ -60,19 +48,19 @@ public class Appointment {
 		this.title = title;
 		this.notes = notes;
 		
-		this.setStart(new Date());
+		this.startDate = new Date();
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
 		cal.add(Calendar.MINUTE, 30);
-		this.setEnd(cal.getTime());
+		this.endDate = cal.getTime();
 	}
 
 	
 	public Appointment(String id, Date start, Date end, String title, String notes) {
 		super();
 		this.id = id;
-		this.setStart(start);
-		this.setEnd(end);
+		this.startDate = start;
+		this.endDate = end;
 		this.title = title;
 		this.notes = notes;
 	}
@@ -80,8 +68,8 @@ public class Appointment {
 	public Appointment(Date start, Date end, String title, String notes, User user) {
 		super();
 		this.id = UUID.randomUUID().toString();
-		this.setStart(start);
-		this.setEnd(end);
+		this.startDate = start;
+		this.endDate = end;
 		this.title = title;
 		this.notes = notes;
 		this.user = user;
@@ -90,8 +78,8 @@ public class Appointment {
 	public Appointment(String id, Date start, Date end, String title, String notes, User user) {
 		super();
 		this.id = id;
-		this.setStart(start);
-		this.setEnd(end);
+		this.startDate = start;
+		this.endDate = end;
 		this.title = title;
 		this.notes = notes;
 		this.user = user;
@@ -103,19 +91,17 @@ public class Appointment {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public Date getStart() {
-		return start;
+	public Date getStartDate() {
+		return startDate;
 	}
-	public void setStart(Date start) {
-		this.start = start;
-		this.startDate = Appointment.date2String(this.start);
+	public void setStartDate(Date start) {
+		this.startDate = start;
 	}
-	public Date getEnd() {
-		return end;
+	public Date getEndDate() {
+		return endDate;
 	}
-	public void setEnd(Date end) {
-		this.end = end;
-		this.endDate = Appointment.date2String(this.end);
+	public void setEndDate(Date end) {
+		this.endDate = end;
 	}
 	public String getTitle() {
 		return title;
@@ -138,14 +124,6 @@ public class Appointment {
 
 	public void setUser(User user) {
 		this.user = user;
-	}
-
-	public String getStartDate() {
-		return startDate;
-	}
-
-	public String getEndDate() {
-		return endDate;
 	}
 	
 	

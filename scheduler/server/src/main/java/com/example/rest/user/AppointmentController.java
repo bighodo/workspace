@@ -31,6 +31,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RestController
 @RequestMapping(value = "/api/user/appointment", produces = "application/json; charset=utf8")
 public class AppointmentController {
+	static int JAVA_DATE_START_YEAR = 1900;
+
 	@Autowired
 	AppointmentDataProvider appointmentDataProvider;
 	@Autowired
@@ -87,12 +89,12 @@ public class AppointmentController {
 			} else {
 				Map<String, Integer> start = (Map<String, Integer>) requestBody.get("startDate");
 				Map<String, Integer> end = (Map<String, Integer>) requestBody.get("endDate");
-				Date startDate = new Date(start.get("year"),
+				Date startDate = new Date(start.get("year")-JAVA_DATE_START_YEAR,
 										  start.get("month"),
 										  start.get("date"),
 										  start.get("hours"),
 										  start.get("minutes"));
-				Date endDate = new Date(end.get("year"),
+				Date endDate = new Date(end.get("year")-JAVA_DATE_START_YEAR,
 										end.get("month"),
 										end.get("date"),
 										end.get("hours"),
@@ -150,8 +152,8 @@ public class AppointmentController {
 				String notes = (String)requestBody.get("notes");
 				appoint.setTitle(title);
 				appoint.setNotes(notes);
-				appoint.setStart(startDate);
-				appoint.setEnd(endDate);
+				appoint.setStartDate(startDate);
+				appoint.setEndDate(endDate);
 				resData.put("appointment",appointmentDataProvider.updateAppointment(appoint));
 				resData.put("result",1);
 			}

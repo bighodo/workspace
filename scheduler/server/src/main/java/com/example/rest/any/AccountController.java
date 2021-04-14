@@ -72,10 +72,12 @@ public class AccountController {
 	public JsonNode register(@RequestBody UserDto userDto) {
 		JsonNode jsonNodeMap = null;
 		Map<String, Object> resData = new HashMap<String, Object>(); 
+		int result = 0;
 		String message = "register failed";
 		User user = userDto.toUser();
 		switch(userDataProvider.createUser(user)) {
 		case 1:
+			result = 1;
 			message = "User id : " + user.getUserId() + " Register Success";
 			break;
 		case -1:
@@ -83,6 +85,7 @@ public class AccountController {
 			break;
 		};
 		
+		resData.put("result", result);
 		resData.put("message",message);
 		jsonNodeMap = mapper.convertValue(resData, JsonNode.class);
 		return jsonNodeMap;

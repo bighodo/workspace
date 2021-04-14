@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import Paper from '@material-ui/core/Paper';
 import {
     Scheduler,
@@ -46,26 +46,54 @@ const Schedule = (props) => {
         resourceName: 'viewStyle'
     }]);
 
+    const schedulerTable = useRef();
+
+    useEffect(()=>{
+        if (window.innerWidth / 10 < 150) {
+            schedulerTable.current.style.left = '150px';
+        } else {
+            schedulerTable.current.style.left = '10%';
+        }
+    },[schedulerTable])
+
     const resizeEvent = useCallback(()=>{
+        if (schedulerTable.current !== undefined) {
+            if (window.innerWidth / 10 < 150) {
+                schedulerTable.current.style.left = '150px';
+            } else {
+                schedulerTable.current.style.left = '10%';
+            }
+        }
         setHeight(window.innerHeight);
-    },[])
+    },[schedulerTable])
 
     //on init
+
     useEffect(()=>{
         updateAppointments();
+    },[])
+
+    useEffect(()=>{
         window.addEventListener("resize",resizeEvent)
         return ()=>{
             window.removeEventListener("resize",resizeEvent);
         };
-    },[]);
+    },[resizeEvent]);
 
     useEffect(()=>{
         let appoints = [];
         appoints.push(props.user.appointments);
-        for (let i = 0; i < props.selectedUsers.length; i++) {
-            let appoint = props.selectedUsers[i];
-            appoints.push(appoint);
+        for (let i = 0; i < props.user.appointments.length; i++) {
+            let appointment = props.user.appointments[i];
+            // appointment.startDate = new Date(appointment.start);
+            // appointment.endDate = new Date(appointment.end);
         }
+        // for (let i = 0; i < props.selectedUsers.length; i++) {
+        //     let appoint = props.selectedUsers[i];
+        //     appoint.start.setYear(appoint.start.getYaer()+JAVA_DATE_START_YEAR)
+        //     appoint.end.setYear(appoint.end.getYaer()+JAVA_DATE_START_YEAR)
+        //     appoints.push(appoint);
+        // }
         setAppointments(appoints);
     },[props.user, props.selectedUsers])
 
@@ -99,14 +127,14 @@ const Schedule = (props) => {
     const createAppointment = (appoint) => {
         let startDate = {
             year: appoint.startDate.getFullYear(),
-            month: appoint.startDate.getMonth()+1,
+            month: appoint.startDate.getMonth(),
             date: appoint.startDate.getDate(),
             hours: appoint.startDate.getHours(),
             minutes: appoint.startDate.getMinutes()
         };
         let endDate = {
             year: appoint.endDate.getFullYear(),
-            month: appoint.endDate.getMonth()+1,
+            month: appoint.endDate.getMonth(),
             date: appoint.endDate.getDate(),
             hours: appoint.endDate.getHours(),
             minutes: appoint.endDate.getMinutes()
@@ -195,14 +223,14 @@ const Schedule = (props) => {
 
 
     return (
-        <Paper className="scheduler-container">
+        <Paper className="scheduler-container" ref={schedulerTable}>
             <Scheduler data={appointments} height={height}>
                 <ViewState />
                 <EditingState
                     onCommitChanges={onCommitChanges} />
                 <GroupingState
                     grouping={grouping}/>
-                <WeekView 
+                <WeekView
                     startDayHour={11} 
                     endDayHour={24} 
                     excludedDays={[1]}
@@ -214,8 +242,8 @@ const Schedule = (props) => {
                 <Resources
                     data={resources}
                     mainResourceName="viewStyle"/>
-                <IntegratedGrouping />
-                <GroupingPanel />
+                {/* <IntegratedGrouping /> */}
+                {/* <GroupingPanel /> */}
 
                 
                 <DragDropProvider allowDrag={() => { return true }} />
