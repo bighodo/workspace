@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import axios from 'axios';
+import Paper from '@material-ui/core/Paper';
 import Schedule from './Schedule';
 import User from './User';
 
@@ -7,13 +7,8 @@ const Main = (props) => {
     const [updated, setUpdated] = useState(0);
 
     const [users, setUsers] = useState([]);
-    const [user, setUser] = useState({username:""});
+    const [user, setUser] = useState({username:"", appointments:[]});
     const [selectedUsers, setSelectedUsers] = useState([]);
-
-    useEffect(()=>{
-        updateUser();
-        updateUsers();
-    },[]);
 
     useEffect(()=>{
         setUpdated(props.updated);

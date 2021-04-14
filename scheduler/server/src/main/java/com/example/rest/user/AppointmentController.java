@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
-@RequestMapping(value = "api/user/appointment", produces = "application/json; charset=utf8")
+@RequestMapping(value = "/api/user/appointment", produces = "application/json; charset=utf8")
 public class AppointmentController {
 	@Autowired
 	AppointmentDataProvider appointmentDataProvider;

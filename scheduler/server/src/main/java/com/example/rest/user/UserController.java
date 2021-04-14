@@ -3,6 +3,7 @@ package com.example.rest.user;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.WebUtils;
 
 import com.example.dataprovider.AppointmentDataProvider;
+import com.example.dataprovider.CommonDataProvider;
 import com.example.dataprovider.JwtDataProvider;
 import com.example.dataprovider.UserDataProvider;
 import com.example.entity.Appointment;
@@ -29,7 +31,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
-@RequestMapping(value = "api/user/account", produces = "application/json; charset=utf8")
+@RequestMapping(value = "/api/user/account", produces = "application/json; charset=utf8")
 public class UserController {
 	@Autowired
 	private UserDataProvider userDataProvider;

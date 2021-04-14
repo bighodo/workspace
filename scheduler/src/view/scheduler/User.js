@@ -7,7 +7,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { AccountBox, Add, Remove } from '@material-ui/icons';
-import axios from 'axios';
+import axios from '../../utils/Rest';
 import { Tab } from '@material-ui/core';
 
 const User = (props) => {
@@ -15,7 +15,7 @@ const User = (props) => {
 
     const [user, setUser] = useState(props.user);
     const [users, setUsers] = useState(props.users);
-    const [selectedUsers, setSelectedUsers] = useState(props.selectedUsers);
+    const [selectedUsers, setSelectedUsers] = useState([]);
 
     useEffect(()=>{
         updateUser();
@@ -35,10 +35,11 @@ const User = (props) => {
     },[props.users])
 
     useEffect(()=>{
+        if (!props.selectedUsers) return;
         setSelectedUsers(props.selectedUsers);
     },[props.selectedUsers])
 
-    uesrEffect(()=>{
+    useEffect(()=>{
         setUpdated(props.updated);
     },[props.updated])
 

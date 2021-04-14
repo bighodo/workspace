@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch} from 'react-router-dom';
-import Schedule from "../view/scheduler/Schedule";
+import Scheduler from "../view/scheduler/Main";
 import Test from "../view/Test";
 import Login from "../view/Login";
 import SignUp from "../view/SignUp";
@@ -12,7 +12,7 @@ const AppRouter = () => {
         {/* <div style={style}> */}
         <div>
           <Switch>
-            <Route exact path="/" component={Schedule} />
+            <Route exact path="/" component={Scheduler} />
             <Route exact path="/test" component={Test} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={SignUp} />

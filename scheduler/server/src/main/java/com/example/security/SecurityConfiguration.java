@@ -11,15 +11,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.example.dataprovider.JwtDataProvider;
+import com.example.dataprovider.UserDataProvider;
+
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-//	@Autowired
-//	private JwtUtil jwtUtil;
-//	@Autowired
-//	private UserDataProvider userDataProvider;
+	@Autowired
+	private JwtDataProvider jwtDataProvider;
+	@Autowired
+	private UserDataProvider userDataProvider;
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -28,12 +31,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)//토큰 기반 인증 사용할거니 필없음
 			.and()
 			.authorizeRequests()
-				.antMatchers("/admin/**").hasRole("ADMIN")
-				.antMatchers("/user/**").hasAnyRole("USER")
+				.antMatchers("/api/admin/**").hasRole("ADMIN")
+				.antMatchers("/api/user/**").hasAnyRole("USER","ADMIN")
 				.anyRequest().permitAll()
 			.and()
-			.formLogin().disable();
-			//.addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userDataProvider),UsernamePasswordAuthenticationFilter.class);
+			.formLogin().disable()
+			.addFilterBefore(new JwtAuthenticationFilter(jwtDataProvider, userDataProvider),UsernamePasswordAuthenticationFilter.class);
 			
 	}
 	

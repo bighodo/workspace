@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 //@RequestMapping(value = "api/every/account", produces = "application/json; charset=utf8")
-@RequestMapping(value = "api/account")
+@RequestMapping(value = "/api/account")
 public class AccountController {
 	@Autowired
 	private UserDataProvider userDataProvider;

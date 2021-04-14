@@ -25,7 +25,7 @@ import axios from 'axios';
 import { red } from '@material-ui/core/colors';
 
 //import appointments from '../../../demo-data/today-appointments';
-const Schedule = () => {
+const Schedule = (props) => {
     const [height, setHeight] = useState(window.innerHeight);
     const [updated, setUpdated] = useState(0);
 
@@ -210,14 +210,14 @@ const Schedule = () => {
                 {/* <Toolbar />
                 <TodayButton />
                 <DateNavigator /> */}
-
+                <Appointments />
                 <Resources
                     data={resources}
                     mainResourceName="viewStyle"/>
                 <IntegratedGrouping />
                 <GroupingPanel />
 
-                <Appointments />
+                
                 <DragDropProvider allowDrag={() => { return true }} />
                 <AppointmentForm />
             </Scheduler>

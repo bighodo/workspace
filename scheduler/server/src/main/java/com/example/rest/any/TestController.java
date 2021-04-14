@@ -14,7 +14,7 @@ import com.example.entity.User;
 
 
 @RestController
-@RequestMapping(value = "api/test")
+@RequestMapping(value = "/api/test")
 public class TestController {
 
 	@Autowired
