@@ -51,6 +51,8 @@ public class AppointmentDataProvider {
 	}
 	
 	public Appointment createAppointment(Appointment appointment) {
+		List<AppointmentDto> appointDtos = repo.findAllByUserIdWithRange(appointment.getUser().getId(),appointment.getStartDate(),appointment.getEndDate());
+		if (appointDtos.size() > 0) return null;
 		AppointmentDto appointDto = new AppointmentDto();
 		appointDto.parse(appointment);
 		repo.save(appointDto);

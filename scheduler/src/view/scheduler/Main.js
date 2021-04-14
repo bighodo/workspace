@@ -18,15 +18,34 @@ const Main = (props) => {
         setUpdated(updated+1);
     }
 
+    const selectUser = target => {
+        let index = users.findIndex(e=>e.id === target.id);
+        if (index < 0) return;
+        users.splice(index, 1);
+
+        setUsers(users.concat());
+        setSelectedUsers(selectedUsers.concat(target));
+    }
+
+    const deselectUser = target => {
+        let index = selectedUsers.findIndex(e=>e.id === target.id);
+        if (index < 0) return;
+        selectedUsers.splice(index, 1);
+
+        setSelectedUsers(selectedUsers.concat());
+        setUsers(users.concat(target));
+    }
+
     return (
         <Paper>
             <User
-                updated={updated}
-                update={update}
                 user={user}
                 users={users}
                 setUser={setUser}
-                setUsers={setUsers}/>
+                setUsers={setUsers}
+                selectedUsers={selectedUsers}
+                selectUser={selectUser}
+                deselectUser={deselectUser}/>
             <Schedule
                 user={user}
                 selectedUsers={selectedUsers}

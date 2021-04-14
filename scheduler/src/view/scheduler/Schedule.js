@@ -23,6 +23,22 @@ import {
 } from '@devexpress/dx-react-scheduler';
 import axios from 'axios';
 import { red } from '@material-ui/core/colors';
+import { Alert } from 'bootstrap';
+
+const viewStyle = [
+    { text: "Individual", id: 0,},
+    { text: "Total", id: 1}
+];
+
+const resources = [{
+    fieldName: 'viewStyle',
+    title: 'ViewStyle',
+    instances: viewStyle
+}];
+
+const grouping = [{
+    resourceName: 'viewStyle'
+}];
 
 //import appointments from '../../../demo-data/today-appointments';
 const Schedule = (props) => {
@@ -32,19 +48,6 @@ const Schedule = (props) => {
     const [appointments, setAppointments] = useState([]);
     const [totalAppointments, setTotalAppointments] = useState([]);
     const [appIndexTable, setAppIndexTable] = useState({});
-
-    const [viewStyle, setViewStyle] = useState([
-        { text: "Individual", id: 0,},
-        { text: "Total", id: 1}
-    ]);
-    const [resources, setResources] = useState([{
-        fieldName: 'viewStyle',
-        title: 'ViewStyle',
-        instances: viewStyle
-    }]);
-    const [grouping, setGrouping] = useState([{
-        resourceName: 'viewStyle'
-    }]);
 
     const schedulerTable = useRef();
 
@@ -67,12 +70,6 @@ const Schedule = (props) => {
         setHeight(window.innerHeight);
     },[schedulerTable])
 
-    //on init
-
-    useEffect(()=>{
-        updateAppointments();
-    },[])
-
     useEffect(()=>{
         window.addEventListener("resize",resizeEvent)
         return ()=>{
@@ -82,18 +79,10 @@ const Schedule = (props) => {
 
     useEffect(()=>{
         let appoints = [];
-        appoints.push(props.user.appointments);
         for (let i = 0; i < props.user.appointments.length; i++) {
             let appointment = props.user.appointments[i];
-            // appointment.startDate = new Date(appointment.start);
-            // appointment.endDate = new Date(appointment.end);
+            appoints.push(appointment);
         }
-        // for (let i = 0; i < props.selectedUsers.length; i++) {
-        //     let appoint = props.selectedUsers[i];
-        //     appoint.start.setYear(appoint.start.getYaer()+JAVA_DATE_START_YEAR)
-        //     appoint.end.setYear(appoint.end.getYaer()+JAVA_DATE_START_YEAR)
-        //     appoints.push(appoint);
-        // }
         setAppointments(appoints);
     },[props.user, props.selectedUsers])
 
@@ -113,15 +102,6 @@ const Schedule = (props) => {
 
     const update = () => {
         setUpdated(updated+1);
-    }
-
-    const updateAppointments = () => {
-        const url = "/api/user/appointment/all";
-        axios.get(url).then(res=>{
-            if(res.data.result === 1) {
-                setAppointments(res.data.appointments);
-            }
-        })
     }
 
     const createAppointment = (appoint) => {
@@ -148,10 +128,13 @@ const Schedule = (props) => {
         const url = "/api/user/appointment/one"
         axios.post(url, data).then(res=>{
             if (res.data.result === 1) {
+                window.Alert('success',"Create appointment.");
                 let appoint = res.data.appointment;
                 let newAppointments = appointments.concat();
                 newAppointments.push(appoint);
                 setAppointments(newAppointments);
+            } else {
+                window.Alert('error', 'Fail to create appointment.');
             }
         })
     }
@@ -218,7 +201,13 @@ const Schedule = (props) => {
     }, [appointments,update]);
 
     const timeTableCell = ({ onDoubleClick, ...restProps }) => {
-        return <WeekView.TimeTableCell onDoubleClick={()=>{createAppointment(restProps)}}/>;
+        if (restProps.groupingInfo[0].id){
+            let targetTime = {startDate: restProps.startDate, endDate: restProps.endDate}
+            // return <WeekView.TimeTableCell onDoubleClick={()=>{createAppointment(targetTime)}}/>;
+            return <WeekView.TimeTableCell onDoubleClick={(...e)=>{console.log(e)}}/>;
+        }
+        else
+            return <WeekView.TimeTableCell/>
     };
 
 
@@ -233,8 +222,8 @@ const Schedule = (props) => {
                 <WeekView
                     startDayHour={11} 
                     endDayHour={24} 
-                    excludedDays={[1]}
-                    timeTableCellComponent={timeTableCell}/>
+                    timeTableCellComponent={timeTableCell}
+                />
                 {/* <Toolbar />
                 <TodayButton />
                 <DateNavigator /> */}
@@ -242,8 +231,8 @@ const Schedule = (props) => {
                 <Resources
                     data={resources}
                     mainResourceName="viewStyle"/>
-                {/* <IntegratedGrouping /> */}
-                {/* <GroupingPanel /> */}
+                <IntegratedGrouping />
+                <GroupingPanel />
 
                 
                 <DragDropProvider allowDrag={() => { return true }} />

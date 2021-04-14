@@ -75,13 +75,11 @@ public class AppointmentController {
 	public Map<String, Object> createAppointment(HttpServletRequest request, @RequestBody Map<String, Object> requestBody) {
 		JsonNode jsonNodeMap = null;
 		Map<String, Object> resData = new HashMap<String, Object>(); 
-
+		int result = 0;
 		String token = null;
 		Cookie cookie = WebUtils.getCookie(request, JwtDataProvider.KEY_TOKEN_IN_COOKIE);
 		if (cookie != null) token = cookie.getValue();
-		if (token == null) {
-			resData.put("result",0);
-		} else {
+		if (token != null) {
 			String id = jwtDataProivder.getIdFromToken(token);
 			User user = userDataProvider.getUserById(id);
 			if (user == null) {
@@ -102,11 +100,14 @@ public class AppointmentController {
 				String title = (String)requestBody.get("title");
 				String notes = (String)requestBody.get("notes");
 				Appointment appointment = new Appointment(startDate, endDate, user.getUsername(), notes, user);
-				resData.put("appointment",appointmentDataProvider.createAppointment(appointment));
-				resData.put("result",1);
+				Appointment resultAppointment = appointmentDataProvider.createAppointment(appointment);
+				if (resultAppointment != null) {
+					resData.put("appointment",resultAppointment);
+					result = 1;
+				}
 			}
 		}
-		
+		resData.put("result", result);
 		return resData;
 //		jsonNodeMap = mapper.convertValue(resData, JsonNode.class);
 //		return jsonNodeMap;

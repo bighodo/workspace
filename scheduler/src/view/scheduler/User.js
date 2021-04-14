@@ -11,86 +11,65 @@ import axios from '../../utils/Rest';
 import { Tab } from '@material-ui/core';
 
 const User = (props) => {
-    const [updated, setUpdated] = useState(0);
-
-    const [user, setUser] = useState(props.user);
-    const [users, setUsers] = useState(props.users);
-    const [selectedUsers, setSelectedUsers] = useState([]);
 
     useEffect(()=>{
         updateUser();
-        updateUsers();
     },[]);
 
     useEffect(()=>{
-        setUpdated(props.updated);
-    },[props.updated])
-
-    useEffect(()=>{
-        setUser(props.user);
+        updateUsers();
     },[props.user])
-
-    useEffect(()=>{
-        setUsers(props.users);
-    },[props.users])
-
-    useEffect(()=>{
-        if (!props.selectedUsers) return;
-        setSelectedUsers(props.selectedUsers);
-    },[props.selectedUsers])
-
-    useEffect(()=>{
-        setUpdated(props.updated);
-    },[props.updated])
 
     const updateUser = () => {
         const url = "/api/user/account/one";
         axios.get(url).then(res=>{
             if (res.data.result === 1) {
+                let user = res.data.user;
+                for (let i = 0; i < user.appointments.length; i++) {
+                    user.appointments[i].viewStyle = 0;
+                }
                 props.setUser(res.data.user);
             }
         })
     }
 
     const updateUsers = () => {
+        if (props.user.id === undefined) return;
         const url = "/api/user/account/all";
         axios.get(url).then(res=>{
+            let users = res.data.users;
+            for (let i = users.length - 1; i >= 0; i--) {
+                let user = users[i];
+                if (props.user.id === user.id) {
+                    users.splice(i, 1);
+                    break;
+                } else {
+                    let appointments = user.appointments;
+                    for (let i = 0; i < appointments.length; i++) {
+                        appointments[i].viewStyle = 0;
+                    }
+                }
+            }
             props.setUsers(res.data.users);
         })
     }
 
-    const deselectUser = user => {
-        for (let i = 0; i < selectedUsers.length; i++) {
-            if (selectedUsers[i] === user) {
-                selectedUsers.splice(i,0);
-                users.push(user);
-                props.update();
-            }
-        }
-    }
-
-    const selectUser = user => {
-        users.push(user);
-        props.update();
-    }
-
-
-    const userTableCells = users.map((user,index)=>
+    const userTableCells = props.users.map((user,index)=>
         <TableRow>
             <TableCell key={user.id}>
                 <Add className="user-add-button" 
                     size="small"
-                    onClick={e=>{selectUser(user)}}/> {user.username}
+                    onClick={e=>{props.selectUser(user)}}/> {user.username}
             </TableCell>
         </TableRow>
     )
 
-    const selectedUserTableCelss = selectedUsers.map((user,index)=>
+    const selectedUserTableCelss = props.selectedUsers.map((user,index)=>
         <TableRow>
             <TableCell key={user.id}>
                 <Remove className="user-add-button" 
                     size="small"
-                    onClick={e=>{deselectUser(user)}}/> {user.username}
+                    onClick={e=>{props.deselectUser(user)}}/> {user.username}
             </TableCell>
         </TableRow>
     )
@@ -109,9 +88,10 @@ const User = (props) => {
                     <TableBody>
                         <TableRow>
                             <TableCell> 
-                                <AccountBox/>{user.username} 
+                                <AccountBox/>{props.user.username} 
                             </TableCell>
                         </TableRow>
+                        {selectedUserTableCelss}
                     </TableBody>
                 </Table>
                 <Table>
