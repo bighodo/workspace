@@ -12,6 +12,7 @@ const AppRouter = () => {
                 <Route exact path='/main' component={Scheduler} />
                 <Route path="/login" component={Login} />
                 <Route path="/signup" component={SignUp} />
+                <Route path="/test" component={Test} />
                 <Redirect
                     path="/"
                     to={getCookie("access-token") === null ? "/login" : "/main"} />

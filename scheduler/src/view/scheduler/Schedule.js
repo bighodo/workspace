@@ -2,14 +2,12 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import Paper from '@material-ui/core/Paper';
 import {
     Scheduler,
-    MonthView,
-    Toolbar,
-    DateNavigator,
     Appointments,
-    TodayButton,
+
     WeekView,
     DragDropProvider,
     AppointmentForm,
+    AppointmentTooltip,
 
     Resources,
     GroupingPanel,
@@ -38,6 +36,13 @@ const resources = [{
 
 const grouping = [{
     resourceName: 'viewStyle'
+}];
+
+
+const testAppoints = [{
+    startDate: new Date(1618475269351),
+    endDate: new Date(1618485269351),
+    title: "test"
 }];
 
 //import appointments from '../../../demo-data/today-appointments';
@@ -83,6 +88,12 @@ const Schedule = (props) => {
             let appointment = props.user.appointments[i];
             appoints.push(appointment);
         }
+        for (let i = 0; i < props.selectedUsers.length; i++) {
+            let selected = props.selectedUsers[i];
+            for (let j = 0; j < selected.appointments.length; j++) {
+                appoints.push(selected.appointments[j]);
+            }
+        }
         setAppointments(appoints);
     },[props.user, props.selectedUsers])
 
@@ -93,12 +104,6 @@ const Schedule = (props) => {
         }
         setAppIndexTable(indexTable);
     },[appointments])
-
-    const today = () => {
-        let date = new Date();
-        let text = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
-        return text;
-    }
 
     const update = () => {
         setUpdated(updated+1);
@@ -122,17 +127,15 @@ const Schedule = (props) => {
         let data = {
             startDate: startDate,
             endDate: endDate,
-            title: appoint.title,
-            notes: appoint.notes
         };
         const url = "/api/user/appointment/one"
         axios.post(url, data).then(res=>{
             if (res.data.result === 1) {
                 window.Alert('success',"Create appointment.");
                 let appoint = res.data.appointment;
-                let newAppointments = appointments.concat();
-                newAppointments.push(appoint);
-                setAppointments(newAppointments);
+                appoint.viewStyle = 0;
+                props.user.appointments.push(appoint);
+                setAppointments(appointments.concat(appoint));
             } else {
                 window.Alert('error', 'Fail to create appointment.');
             }
@@ -140,39 +143,35 @@ const Schedule = (props) => {
     }
 
     const updateAppointment = (appoints) => {
-        for (let id in appoints){
-            let appoint = appoints[id];
+        for (let i = 0; i < appoints.length; i++){
+            let appoint = appoints[i],
+                start = new Date(appoint.startDate),
+                end = new Date(appoint.endDate);
+
             let startDate = {
-                year: appoint.startDate.getFullYear(),
-                month: appoint.startDate.getMonth()+1,
-                date: appoint.startDate.getDate(),
-                hours: appoint.startDate.getHours(),
-                minutes: appoint.startDate.getMinutes()
+                year: start.getFullYear(),
+                month: start.getMonth(),
+                date: start.getDate(),
+                hours: start.getHours(),
+                minutes: start.getMinutes()
             };
             let endDate = {
-                year: appoint.endDate.getFullYear(),
-                month: appoint.endDate.getMonth()+1,
-                date: appoint.endDate.getDate(),
-                hours: appoint.endDate.getHours(),
-                minutes: appoint.endDate.getMinutes()
+                year: end.getFullYear(),
+                month: end.getMonth(),
+                date: end.getDate(),
+                hours: end.getHours(),
+                minutes: end.getMinutes()
             }
             let data = {
-                id: id,
+                id: appoint.id,
                 startDate: startDate,
                 endDate: endDate,
-                title: appoint.title,
-                notes: appoint.notes
             };
             const url = "/api/user/appointment/one"
             axios.patch(url, data).then(res=>{
+                console.log(res);
                 if (res.data.result === 1) {
-                    let appoint = res.data.appointment;
-    
-                    let newAppointments = appointments.concat();
-                    let appointment = newAppointments[appIndexTable[appoint.id]];
-                    appointment.startDate = appoint.startDate;
-                    appointment.endDate = appoint.endDate;
-                    setAppointments(newAppointments);
+                    props.updateUser();
                 }
             })
         }
@@ -184,27 +183,40 @@ const Schedule = (props) => {
             createAppointment(target.added);
         }
         if (target.changed) {
-            let newAppointments = appointments.concat();
+            let changed = [];
             for (let id in target.changed) {
-                let changed = target.changed[id],
-                    appointment = newAppointments[appIndexTable[id]];
+                let selected = target.changed[id];
 
-                console.log(changed.endDate.getFullYear);
-                appointment.startDate = changed.startDate;
-                appointment.endDate = changed.endDate;
+                let index = appointments.findIndex(e=>e.id === id);
+                if (index < 0) continue;
+                
+                let appoint = appointments[index];
+                if (appoint.user.id === props.user.id) {
+                    appoint.startDate = selected.startDate.valueOf();
+                    appoint.endDate = selected.endDate.valueOf();
+                    changed.push(appoint);
+                }
             }
-            setAppointments(newAppointments);
-            updateAppointment(target.changed)
+            setAppointments(appointments.concat());
+            updateAppointment(changed)
         }
         if(target.deleted) {
         }
     }, [appointments,update]);
 
+    const isMine = appoint => {
+        if (appoint.user === undefined) return false;
+        if (appoint.user.id !== props.user.id) return false;
+        return true;
+    }
+
     const timeTableCell = ({ onDoubleClick, ...restProps }) => {
-        if (restProps.groupingInfo[0].id){
+        if (restProps.groupingInfo[0].id === 0){
             let targetTime = {startDate: restProps.startDate, endDate: restProps.endDate}
             // return <WeekView.TimeTableCell onDoubleClick={()=>{createAppointment(targetTime)}}/>;
-            return <WeekView.TimeTableCell onDoubleClick={(...e)=>{console.log(e)}}/>;
+            return <WeekView.TimeTableCell onDoubleClick={(e)=>{
+                createAppointment(targetTime)
+            }}/>;
         }
         else
             return <WeekView.TimeTableCell/>
@@ -216,17 +228,17 @@ const Schedule = (props) => {
             <Scheduler data={appointments} height={height}>
                 <ViewState />
                 <EditingState
-                    onCommitChanges={onCommitChanges} />
+                    onCommitChanges={onCommitChanges} 
+                />
+                <IntegratedEditing/>
                 <GroupingState
                     grouping={grouping}/>
                 <WeekView
-                    startDayHour={11} 
+                    cellDuration={60}
+                    startDayHour={0} 
                     endDayHour={24} 
-                    timeTableCellComponent={timeTableCell}
+                    // timeTableCellComponent={timeTableCell}
                 />
-                {/* <Toolbar />
-                <TodayButton />
-                <DateNavigator /> */}
                 <Appointments />
                 <Resources
                     data={resources}
@@ -234,8 +246,13 @@ const Schedule = (props) => {
                 <IntegratedGrouping />
                 <GroupingPanel />
 
-                
-                <DragDropProvider allowDrag={() => { return true }} />
+                <DragDropProvider
+                    allowDrag={isMine}
+                    allowResize={isMine}/>
+                <AppointmentTooltip
+                    showOpenButton
+                    showDeleteButton
+                />
                 <AppointmentForm />
             </Scheduler>
         </Paper>
@@ -244,15 +261,6 @@ const Schedule = (props) => {
 
 export default Schedule
 
-const date2Text = date => {
-    let text = date.getFullYear()+"-"+
-        numFormat(date.getMonth()+1)+"-"+
-        numFormat(date.getDate())+"T"+
-        numFormat(date.getHours()) + ":"+
-        numFormat(date.getMinutes());
-    console.log(text);
-    return text;
-}
 
 const numFormat = variable => {
     variable = Number(variable).toString();

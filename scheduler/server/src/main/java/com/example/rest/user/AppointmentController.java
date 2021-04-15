@@ -75,6 +75,7 @@ public class AppointmentController {
 	public Map<String, Object> createAppointment(HttpServletRequest request, @RequestBody Map<String, Object> requestBody) {
 		JsonNode jsonNodeMap = null;
 		Map<String, Object> resData = new HashMap<String, Object>(); 
+		
 		int result = 0;
 		String token = null;
 		Cookie cookie = WebUtils.getCookie(request, JwtDataProvider.KEY_TOKEN_IN_COOKIE);
@@ -97,9 +98,9 @@ public class AppointmentController {
 										end.get("date"),
 										end.get("hours"),
 										end.get("minutes"));
-				String title = (String)requestBody.get("title");
-				String notes = (String)requestBody.get("notes");
-				Appointment appointment = new Appointment(startDate, endDate, user.getUsername(), notes, user);
+//				String title = (String)requestBody.get("title");
+//				String notes = (String)requestBody.get("notes");
+				Appointment appointment = new Appointment(startDate, endDate, user.getUsername(), "", user);
 				Appointment resultAppointment = appointmentDataProvider.createAppointment(appointment);
 				if (resultAppointment != null) {
 					resData.put("appointment",resultAppointment);
@@ -122,15 +123,13 @@ public class AppointmentController {
 		String appointId = (String)requestBody.get("id");
 		Appointment appoint = appointmentDataProvider.getAppointmentById(appointId);
 		
+		int result = 0;
 		String token = null;
 		Cookie cookie = WebUtils.getCookie(request, JwtDataProvider.KEY_TOKEN_IN_COOKIE);
 		if (cookie != null || appoint == null) {
 			token = cookie.getValue();
-			resData.put("result",0);
 		}
-		if (token == null) {
-			resData.put("result",0);
-		} else {
+		if (token != null) {
 			String id = jwtDataProivder.getIdFromToken(token);
 			User user = userDataProvider.getUserById(id);
 			if (user == null) {
@@ -139,26 +138,31 @@ public class AppointmentController {
 
 				Map<String, Integer> start = (Map<String, Integer>) requestBody.get("startDate");
 				Map<String, Integer> end = (Map<String, Integer>) requestBody.get("endDate");
-				Date startDate = new Date(start.get("year"),
+				Date startDate = new Date(start.get("year")-JAVA_DATE_START_YEAR,
 										  start.get("month"),
 										  start.get("date"),
 										  start.get("hours"),
 										  start.get("minutes"));
-				Date endDate = new Date(end.get("year"),
+				Date endDate = new Date(end.get("year")-JAVA_DATE_START_YEAR,
 										end.get("month"),
 										end.get("date"),
 										end.get("hours"),
 										end.get("minutes"));
-				String title = (String)requestBody.get("title");
-				String notes = (String)requestBody.get("notes");
-				appoint.setTitle(title);
-				appoint.setNotes(notes);
+//				String title = (String)requestBody.get("title");
+//				String notes = (String)requestBody.get("notes");
+				appoint.setTitle(user.getUsername());
+				appoint.setNotes("");
 				appoint.setStartDate(startDate);
 				appoint.setEndDate(endDate);
-				resData.put("appointment",appointmentDataProvider.updateAppointment(appoint));
-				resData.put("result",1);
+				Appointment updated = appointmentDataProvider.updateAppointment(appoint);
+				if (updated != null) {
+					resData.put("appointment",updated);
+					result = 1;
+				}
+
 			}
 		}
+		resData.put("result", result);
 		
 		return resData;
 //		jsonNodeMap = mapper.convertValue(resData, JsonNode.class);

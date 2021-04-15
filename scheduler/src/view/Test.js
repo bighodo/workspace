@@ -162,7 +162,7 @@ const Test = () => {
             onAddedAppointmentChange={onAddedAppointmentChange}
           />
 
-          <IntegratedEditing />
+          {/* <IntegratedEditing /> */}
           <WeekView
             startDayHour={9}
             endDayHour={19}
@@ -175,13 +175,13 @@ const Test = () => {
             showOpenButton
             showDeleteButton={allowDeleting}
           />
-          <AppointmentForm
+          {/* <AppointmentForm
             commandButtonComponent={CommandButton}
             readOnly={isAppointmentBeingCreated ? false : !allowUpdating}
-          />
+          /> */}
           <DragDropProvider
-            allowDrag={allowDrag}
-            allowResize={allowResize}
+            // allowDrag={allowDrag}
+            // allowResize={allowResize}
           />
         </Scheduler>
       </Paper>

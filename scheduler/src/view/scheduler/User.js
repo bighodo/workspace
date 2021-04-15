@@ -7,53 +7,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { AccountBox, Add, Remove } from '@material-ui/icons';
-import axios from '../../utils/Rest';
 import { Tab } from '@material-ui/core';
 
 const User = (props) => {
-
-    useEffect(()=>{
-        updateUser();
-    },[]);
-
-    useEffect(()=>{
-        updateUsers();
-    },[props.user])
-
-    const updateUser = () => {
-        const url = "/api/user/account/one";
-        axios.get(url).then(res=>{
-            if (res.data.result === 1) {
-                let user = res.data.user;
-                for (let i = 0; i < user.appointments.length; i++) {
-                    user.appointments[i].viewStyle = 0;
-                }
-                props.setUser(res.data.user);
-            }
-        })
-    }
-
-    const updateUsers = () => {
-        if (props.user.id === undefined) return;
-        const url = "/api/user/account/all";
-        axios.get(url).then(res=>{
-            let users = res.data.users;
-            for (let i = users.length - 1; i >= 0; i--) {
-                let user = users[i];
-                if (props.user.id === user.id) {
-                    users.splice(i, 1);
-                    break;
-                } else {
-                    let appointments = user.appointments;
-                    for (let i = 0; i < appointments.length; i++) {
-                        appointments[i].viewStyle = 0;
-                    }
-                }
-            }
-            props.setUsers(res.data.users);
-        })
-    }
-
     const userTableCells = props.users.map((user,index)=>
         <TableRow>
             <TableCell key={user.id}>

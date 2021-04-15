@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Schedule from './Schedule';
 import User from './User';
+import axios from '../../utils/Rest';
 
 const Main = (props) => {
     const [updated, setUpdated] = useState(0);
@@ -11,11 +12,50 @@ const Main = (props) => {
     const [selectedUsers, setSelectedUsers] = useState([]);
 
     useEffect(()=>{
-        setUpdated(props.updated);
-    },[props.updated])
+        updateUser();
+    },[])
+
+    useEffect(()=>{
+        updateUsers();
+    },[user])
+
 
     const update = () => {
         setUpdated(updated+1);
+    }
+
+    const updateUser = () => {
+        const url = "/api/user/account/one";
+        axios.get(url).then(res=>{
+            if (res.data.result === 1) {
+                let user = res.data.user;
+                for (let i = 0; i < user.appointments.length; i++) {
+                    user.appointments[i].viewStyle = 0;
+                }
+                setUser(res.data.user);
+            }
+        })
+    }
+
+    const updateUsers = () => {
+        if (user.id === undefined) return;
+        const url = "/api/user/account/all";
+        axios.get(url).then(res=>{
+            let users = res.data.users;
+            for (let i = users.length - 1; i >= 0; i--) {
+                let target = users[i];
+                if (user.id === target.id) {
+                    users.splice(i, 1);
+                    break;
+                } else {
+                    let appointments = target.appointments;
+                    for (let i = 0; i < appointments.length; i++) {
+                        appointments[i].viewStyle = 0;
+                    }
+                }
+            }
+            setUsers(res.data.users);
+        })
     }
 
     const selectUser = target => {
@@ -41,8 +81,6 @@ const Main = (props) => {
             <User
                 user={user}
                 users={users}
-                setUser={setUser}
-                setUsers={setUsers}
                 selectedUsers={selectedUsers}
                 selectUser={selectUser}
                 deselectUser={deselectUser}/>
@@ -50,7 +88,8 @@ const Main = (props) => {
                 user={user}
                 selectedUsers={selectedUsers}
                 updated={updated}
-                update={update}/>
+                update={update}
+                updateUser={updateUser}/>
         </Paper>
     )
 }
