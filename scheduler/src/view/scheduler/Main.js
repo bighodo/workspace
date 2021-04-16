@@ -1,8 +1,12 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import axios from '../../utils/Rest';
+
+import { Add } from '@material-ui/icons';
 import Paper from '@material-ui/core/Paper';
 import Schedule from './Schedule';
 import User from './User';
-import axios from '../../utils/Rest';
+import Modal from './Modal';
+
 
 const Main = (props) => {
     const [updated, setUpdated] = useState(0);
@@ -78,6 +82,10 @@ const Main = (props) => {
 
     return (
         <Paper>
+            <div className="add-appointment-background-layer">
+                <Add fontSize="midium"/>
+            </div>
+            <Modal/>
             <User
                 user={user}
                 users={users}

@@ -35,10 +35,8 @@ const User = (props) => {
             <TableContainer>
                 <Table>
                     <TableHead>
-                        <TableRow>
-                            <TableCell>
-                                ● USER
-                            </TableCell>
+                        <TableRow style={{backgroundColor:"#B0B0B0"}}>
+                            <TableCell/>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -52,8 +50,9 @@ const User = (props) => {
                 </Table>
                 <Table>
                     <TableHead>
-                        <TableCell>
-                        </TableCell>
+                        <TableRow style={{backgroundColor:"#B0B0B0"}}>
+                            <TableCell/>
+                        </TableRow>
                     </TableHead>
                     <TableBody>
                         {userTableCells}

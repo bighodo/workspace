@@ -226,34 +226,24 @@ const Schedule = (props) => {
     return (
         <Paper className="scheduler-container" ref={schedulerTable}>
             <Scheduler data={appointments} height={height}>
-                <ViewState />
-                <EditingState
-                    onCommitChanges={onCommitChanges} 
-                />
-                <IntegratedEditing/>
-                <GroupingState
-                    grouping={grouping}/>
+                <ViewState/>
+                <EditingState onCommitChanges={onCommitChanges} />
+                <IntegratedEditing />
                 <WeekView
-                    cellDuration={60}
-                    startDayHour={0} 
-                    endDayHour={24} 
-                    // timeTableCellComponent={timeTableCell}
+                    startDayHour={0}
+                    endDayHour={24}
                 />
                 <Appointments />
+                <AppointmentTooltip showDeleteButton/>
+                <GroupingState grouping={grouping}/>
                 <Resources
                     data={resources}
-                    mainResourceName="viewStyle"/>
+                    mainResourceName="viewStyle" />
                 <IntegratedGrouping />
                 <GroupingPanel />
-
                 <DragDropProvider
                     allowDrag={isMine}
                     allowResize={isMine}/>
-                <AppointmentTooltip
-                    showOpenButton
-                    showDeleteButton
-                />
-                <AppointmentForm />
             </Scheduler>
         </Paper>
     );
