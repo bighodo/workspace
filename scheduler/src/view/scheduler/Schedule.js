@@ -110,6 +110,7 @@ const Schedule = (props) => {
     }
 
     const createAppointment = (appoint) => {
+        if (appoint === undefined) return;
         let startDate = {
             year: appoint.startDate.getFullYear(),
             month: appoint.startDate.getMonth(),
@@ -141,6 +142,10 @@ const Schedule = (props) => {
             }
         })
     }
+
+    useEffect(()=>{
+        props.setCreateAppointment(createAppointment);
+    },[createAppointment]);
 
     const updateAppointment = (appoints) => {
         for (let i = 0; i < appoints.length; i++){

@@ -28,11 +28,9 @@ const DAYS = 24 * HOURS;
 const FIRST_DAY_OF_WEEK = 4;
 
 const Modal = (props) => {
-    const [open, setOpen] = useState(true);
     const [startDate, setStartDate] = useState(getToday());
     const [endDate, setEndDate] = useState(new Date(getToday().valueOf() + 1 * HOURS));
     const [rangeOfThisWeek, setRangeOfThisWeek] = useState(isOnThisWeek(new Date()));
-
 
     const handleStartDateChange = (date) => {
         if (date < rangeOfThisWeek[0] || date > rangeOfThisWeek[1]) {
@@ -56,15 +54,24 @@ const Modal = (props) => {
         setEndDate(date);
     }
 
-    const handleClose = () => {
-        
+    const closeModal = () => {
+        props.setModalOpen(false);
     };
+
+    const createAppointment = () => {
+        let appointment = {
+            startDate: startDate,
+            endDate: endDate
+        };
+        props.createAppointment(appointment);
+        closeModal();
+    }
 
     return (
         <Paper>
             <Dialog
-                open={open}
-                onClose={handleClose}
+                open={props.modalOpen}
+                // onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description">
                 <DialogTitle id="alert-dialog-title">{"Make appointment"}</DialogTitle>
@@ -137,11 +144,11 @@ const Modal = (props) => {
 
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                        Disagree
+                    <Button onClick={closeModal} color="primary">
+                        Cancle
                     </Button>
-                    <Button onClick={handleClose} color="primary" autoFocus>
-                        Agree
+                    <Button onClick={createAppointment} color="primary" autoFocus>
+                        Confirm
                     </Button>
                 </DialogActions>
             </Dialog>

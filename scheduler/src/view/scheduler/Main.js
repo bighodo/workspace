@@ -15,6 +15,9 @@ const Main = (props) => {
     const [user, setUser] = useState({username:"", appointments:[]});
     const [selectedUsers, setSelectedUsers] = useState([]);
 
+    const [createAppointment, setCreateAppointment] = useState();
+    const [modalOpen, setModalOpen] = useState(false);
+
     useEffect(()=>{
         updateUser();
     },[])
@@ -22,7 +25,6 @@ const Main = (props) => {
     useEffect(()=>{
         updateUsers();
     },[user])
-
 
     const update = () => {
         setUpdated(updated+1);
@@ -80,12 +82,19 @@ const Main = (props) => {
         setUsers(users.concat(target));
     }
 
+    const openModal = () => {
+        setModalOpen(true);
+    }
+
     return (
         <Paper>
             <div className="add-appointment-background-layer">
-                <Add fontSize="midium"/>
+                <Add fontSize="midium" onClick={openModal}/>
             </div>
-            <Modal/>
+            <Modal
+                createAppointment={createAppointment}
+                modalOpen = {modalOpen}
+                setModalOpen={setModalOpen}/>
             <User
                 user={user}
                 users={users}
@@ -97,7 +106,9 @@ const Main = (props) => {
                 selectedUsers={selectedUsers}
                 updated={updated}
                 update={update}
-                updateUser={updateUser}/>
+                updateUser={updateUser}
+                
+                setCreateAppointment={setCreateAppointment}/>
         </Paper>
     )
 }
