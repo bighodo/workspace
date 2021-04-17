@@ -58,12 +58,13 @@ const Modal = (props) => {
         props.setModalOpen(false);
     };
 
+
     const createAppointment = () => {
         let appointment = {
             startDate: startDate,
             endDate: endDate
         };
-        props.createAppointment(appointment);
+        props.createAppointment[0](appointment);
         closeModal();
     }
 

@@ -52,7 +52,6 @@ const Schedule = (props) => {
 
     const [appointments, setAppointments] = useState([]);
     const [totalAppointments, setTotalAppointments] = useState([]);
-    const [appIndexTable, setAppIndexTable] = useState({});
 
     const schedulerTable = useRef();
 
@@ -98,18 +97,43 @@ const Schedule = (props) => {
     },[props.user, props.selectedUsers])
 
     useEffect(()=>{
-        let indexTable = {};
+        let total =[];
         for (let i = 0; i < appointments.length; i++) {
-            indexTable[appointments[i].id] = i;
+            let affectable = false,
+                appoint = appointments[i];
+
+            for (let j = 0; j < total.length; j++) {
+                let totalApp = total[j];
+                if ((
+                    appoint.startDate > totalApp.startDate &&
+                    appoint.startDate < totalApp.endDate ) || (
+                    appoint.endDate > totalApp.startDate &&
+                    appoint.endDate < totalApp.endDate ))
+                    {
+                        totalApp.startDate = Math.min(appoint.startDate, totalApp.startDate);
+                        totalApp.endDate = Math.max(appoint.endDate, totalApp.endDate);
+                        affectable = true;
+                        break;
+                    }
+            }
+
+            if (affectable) continue;
+            let totalApp = {
+                startDate: appoint.startDate,
+                endDate: appoint.endDate,
+                title: "Invalid",
+                viewStyle: 1
+            }
+            total.push(totalApp);
         }
-        setAppIndexTable(indexTable);
+        setTotalAppointments(total.concat(appointments));
     },[appointments])
 
     const update = () => {
         setUpdated(updated+1);
     }
 
-    const createAppointment = (appoint) => {
+    const createAppointment = useCallback((appoint) => {
         if (appoint === undefined) return;
         let startDate = {
             year: appoint.startDate.getFullYear(),
@@ -141,10 +165,12 @@ const Schedule = (props) => {
                 window.Alert('error', 'Fail to create appointment.');
             }
         })
-    }
+    },[appointments]);
 
     useEffect(()=>{
-        props.setCreateAppointment(createAppointment);
+        let funcWrapper = [];
+        funcWrapper.push(createAppointment);
+        props.setCreateAppointment(funcWrapper);
     },[createAppointment]);
 
     const updateAppointment = (appoints) => {
@@ -174,7 +200,6 @@ const Schedule = (props) => {
             };
             const url = "/api/user/appointment/one"
             axios.patch(url, data).then(res=>{
-                console.log(res);
                 if (res.data.result === 1) {
                     props.updateUser();
                 }
@@ -183,7 +208,6 @@ const Schedule = (props) => {
     }
 
     const onCommitChanges = useCallback(target => {
-        console.log(target);
         if (target.added) {
             createAppointment(target.added);
         }
@@ -230,7 +254,7 @@ const Schedule = (props) => {
 
     return (
         <Paper className="scheduler-container" ref={schedulerTable}>
-            <Scheduler data={appointments} height={height}>
+            <Scheduler data={totalAppointments} height={height}>
                 <ViewState/>
                 <EditingState onCommitChanges={onCommitChanges} />
                 <IntegratedEditing />

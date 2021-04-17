@@ -69,7 +69,9 @@ public class UserController {
 			if (userDto == null) {
 				resData.put("result",0);
 			} else {
-				resData.put("user", commonDataProvider.convertUserDto2Map(userDto));
+				List<UserDto> userDtos = new ArrayList<UserDto>();
+				userDtos.add(userDto);
+				resData.put("users", commonDataProvider.convertUserDtos2MapList(userDtos));
 				resData.put("result",1);
 			}
 		}

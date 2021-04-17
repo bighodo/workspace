@@ -15,7 +15,7 @@ const Main = (props) => {
     const [user, setUser] = useState({username:"", appointments:[]});
     const [selectedUsers, setSelectedUsers] = useState([]);
 
-    const [createAppointment, setCreateAppointment] = useState();
+    const [createAppointment, setCreateAppointment] = useState(8);
     const [modalOpen, setModalOpen] = useState(false);
 
     useEffect(()=>{
@@ -34,11 +34,11 @@ const Main = (props) => {
         const url = "/api/user/account/one";
         axios.get(url).then(res=>{
             if (res.data.result === 1) {
-                let user = res.data.user;
+                let user = res.data.users[0];
                 for (let i = 0; i < user.appointments.length; i++) {
                     user.appointments[i].viewStyle = 0;
                 }
-                setUser(res.data.user);
+                setUser(user);
             }
         })
     }
@@ -52,7 +52,6 @@ const Main = (props) => {
                 let target = users[i];
                 if (user.id === target.id) {
                     users.splice(i, 1);
-                    break;
                 } else {
                     let appointments = target.appointments;
                     for (let i = 0; i < appointments.length; i++) {
@@ -60,7 +59,7 @@ const Main = (props) => {
                     }
                 }
             }
-            setUsers(res.data.users);
+            setUsers(users);
         })
     }
 
