@@ -37,6 +37,7 @@ const Main = (props) => {
                 let user = res.data.users[0];
                 for (let i = 0; i < user.appointments.length; i++) {
                     user.appointments[i].viewStyle = 0;
+                    user.appointments[i].memeber = user.id;
                 }
                 setUser(user);
             }
@@ -56,6 +57,7 @@ const Main = (props) => {
                     let appointments = target.appointments;
                     for (let i = 0; i < appointments.length; i++) {
                         appointments[i].viewStyle = 0;
+                        appointments[i].member = target.id;
                     }
                 }
             }

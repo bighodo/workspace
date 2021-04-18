@@ -28,16 +28,9 @@ const viewStyle = [
     { text: "Total", id: 1}
 ];
 
-const resources = [{
-    fieldName: 'viewStyle',
-    title: 'ViewStyle',
-    instances: viewStyle
-}];
-
 const grouping = [{
     resourceName: 'viewStyle'
 }];
-
 
 const testAppoints = [{
     startDate: new Date(1618475269351),
@@ -52,6 +45,13 @@ const Schedule = (props) => {
 
     const [appointments, setAppointments] = useState([]);
     const [totalAppointments, setTotalAppointments] = useState([]);
+
+    const [member, setMember] = useState([]);
+    const [resources, setResources] = useState([{
+        fieldName: 'viewStyle',
+        title: 'ViewStyle',
+        instances: viewStyle
+    }]);
 
     const schedulerTable = useRef();
 
